@@ -22,6 +22,7 @@ verilate(${CMAKE_PROJECT_NAME}
     SOURCES
         src/adder.sv
         src/alu.sv
+        src/imm_decoder.sv
         src/reg_file.sv
     INCLUDE_DIRS
         include
