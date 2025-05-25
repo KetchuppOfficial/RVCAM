@@ -23,6 +23,8 @@ verilate(${CMAKE_PROJECT_NAME}
         src/adder.sv
         src/alu.sv
         src/reg_file.sv
+    INCLUDE_DIRS
+        include
     TOP_MODULE
         ALU
     PREFIX

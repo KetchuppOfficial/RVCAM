@@ -1,5 +1,7 @@
+`include "constants.sv"
+
 module Adder #(
-    parameter N = 64
+    parameter N = `XLEN
 ) (
     input logic[N-1:0] a, b,
     input logic control, // 0 for addition, 1 for subtraction
@@ -18,7 +20,7 @@ module Adder #(
     assign z = (result == 0);
     assign v = (a_sign ^ result_sign) // "a" and "result" have opposite signs
              & ~(control ^ (a_sign ^ b_sign)); // addition:    sign(a) == sign(b), or
-                                                  // subtraction: sign(a) != sign(b)
+                                               // subtraction: sign(a) != sign(b)
 
     assign b_or_inv_b = control ? ~b : b;
     assign {c, result} = a + b_or_inv_b + {{N-1{1'b0}}, control };

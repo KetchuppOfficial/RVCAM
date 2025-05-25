@@ -1,15 +1,17 @@
+`include "constants.sv"
+
 module RegFile #(
-    parameter XLEN = 64,
-    parameter NREGS = 32
+    parameter N = `XLEN,
+    parameter GPRS = `GPRS_COUNT
 ) (
     input logic clk,
     input logic we3,
-    input logic[$clog(NREGS):0] addr1, addr2, addr3,
-    input logic[XLEN-1:0] wd3,
+    input logic[$clog(GPRS):0] addr1, addr2, addr3,
+    input logic[N-1:0] wd3,
 
-    output logic[XLEN-1:0] rd1, rd2
+    output logic[N-1:0] rd1, rd2
 );
-    logic[XLEN-1:0] reg_file[NREGS-1:0];
+    logic[N-1:0] reg_file[GPRS-1:0];
 
     always_ff @(posedge clk)
         if (we3)
