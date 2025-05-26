@@ -28,6 +28,8 @@ verilate(${CMAKE_PROJECT_NAME}
         src/control-unit/control-unit.sv
         src/control-unit/main-decoder.sv
         src/control-unit/pc-source-decoder.sv
+        src/memory/data-memory.sv
+        src/memory/instruction-memory.sv
     INCLUDE_DIRS
         include
     TOP_MODULE
