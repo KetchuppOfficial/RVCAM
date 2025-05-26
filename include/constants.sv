@@ -1,6 +1,7 @@
 // Common architectural constants
 `define XLEN 64
 `define GPRS_COUNT 32
+`define GPR_ENCODE_BITS $clog(`GPRS_COUNT)
 
 // Instruction decoding
 // Note: begin and end are inclusive
@@ -91,5 +92,11 @@
 // PC source
 `define PC_SRC_BITS_COUNT   2
 `define PC_SRC_PC_PLUS_4    2'b00 // other instructions
-`define PC_SRC_PC_PLUS_IMM  2'b01 // jal, beq, bne, blt, bge, bltu, bgeu
+`define PC_SRC_PC_PLUS_IMM  2'b01 // jal or one of beq, bne, blt, bge, bltu, bgeu is taken
 `define PC_SRC_GPR_PLUS_IMM 2'b10 // jalr
+
+// Hazard unit
+`define FORWARD_SRC_BITS_COUNT 2
+`define NO_FORWARDING          2'b00
+`define FORWARD_FROM_WRITEBACK 2'b01
+`define FORWARD_FROM_MEMORY    2'b10

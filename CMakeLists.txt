@@ -22,6 +22,7 @@ verilate(${CMAKE_PROJECT_NAME}
     SOURCES
         src/adder.sv
         src/alu.sv
+        src/hazard-unit.sv
         src/imm-decoder.sv
         src/reg-file.sv
         src/control-unit/alu-decoder.sv
