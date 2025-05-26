@@ -13,7 +13,7 @@ module RegFile #(
 );
     logic[N-1:0] reg_file[GPRS-1:0];
 
-    always_ff @(posedge clk)
+    always_ff @(negedge clk)
         if (we3)
             reg_file[addr3] <= wd3;
 
