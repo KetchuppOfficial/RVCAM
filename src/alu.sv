@@ -6,9 +6,9 @@ module ALU #(
     input logic[N-1:0] a, b,
     input logic[3:0] control,
 
-    output logic[N-1:0] result
+    output logic[N-1:0] result,
+    output logic n, z, c, v
 );
-    logic n, z, c, v;
     logic[N-1:0] sum;
 
     Adder adder(.a(a), .b(b), .control(control[0]),
@@ -16,17 +16,27 @@ module ALU #(
 
     always_comb
         case (control)
-            `ALU_ADD:  result = sum;
-            `ALU_SUB:  result = sum;
-            `ALU_AND:  result = a & b;
-            `ALU_OR:   result = a | b;
-            `ALU_XOR:  result = a ^ b;
-            `ALU_EQ:   result = {{N-1{1'b0}}, z};
-            `ALU_NE:   result = {{N-1{1'b0}}, ~z};
-            `ALU_SLT:  result = {{N-1{1'b0}}, n ^ v};
-            `ALU_SLTU: result = {{N-1{1'b0}}, ~c};
-            `ALU_SGE:  result = {{N-1{1'b0}}, ~(n ^ v)};
-            `ALU_SGEU: result = {{N-1{1'b0}}, c};
-            default:   result = {N{1'bx}};
+            `ALU_CNTL_ADD:
+                result = sum;
+            `ALU_CNTL_AND:
+                result = a & b;
+            `ALU_CNTL_OR:
+                result = a | b;
+            `ALU_CNTL_XOR:
+                result = a ^ b;
+            `ALU_CNTL_SLL:
+                result = a << b;
+            `ALU_CNTL_SRL:
+                result = a >> b;
+            `ALU_CNTL_SRA:
+                result = a >>> b;
+            `ALU_CNTL_SUB:
+                result = sum;
+            `ALU_CNTL_SLT:
+                result = {{N-1{1'b0}}, n ^ v};
+            `ALU_CNTL_SLTU:
+                result = {{N-1{1'b0}}, ~c};
+            default:
+                result = {N{1'bx}};
         endcase
 endmodule

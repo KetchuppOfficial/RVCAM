@@ -22,8 +22,12 @@ verilate(${CMAKE_PROJECT_NAME}
     SOURCES
         src/adder.sv
         src/alu.sv
-        src/imm_decoder.sv
-        src/reg_file.sv
+        src/imm-decoder.sv
+        src/reg-file.sv
+        src/control-unit/alu-decoder.sv
+        src/control-unit/control-unit.sv
+        src/control-unit/main-decoder.sv
+        src/control-unit/pc-source-decoder.sv
     INCLUDE_DIRS
         include
     TOP_MODULE

@@ -32,11 +32,11 @@ int main(int argc, char **argv) try
     top->a = -1;
     top->b = 1;
 
-    top->control = 0b1001;
+    top->control = 0b0011;
     top->eval();
     fmt::println("slt(-1, 1) = {}", top->result);
 
-    top->control = 0b1011;
+    top->control = 0b0101;
     top->eval();
     fmt::println("sltu(-1, 1) = {}", top->result);
 
