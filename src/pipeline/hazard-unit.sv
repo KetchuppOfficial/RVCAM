@@ -2,9 +2,9 @@
 
 module HazardUnit(
     input logic[`GPR_ENCODE_BITS-1:0] rs1_decode, rs2_decode, rs1_execute, rs2_execute,
-                                      rd_execute, rd_memory, rd_writeback,
+    input logic[`GPR_ENCODE_BITS-1:0] rd_execute, rd_memory, rd_writeback,
     input logic branch_taken, load_on_execute,
-    input logic write_gpr_memory, write_gpr_writeback,
+    input logic we_gpr_memory, we_gpr_writeback,
 
     output logic[`FORWARD_SRC_BITS_COUNT-1:0] forward_rs1, forward_rs2,
     output logic stall_fetch, stall_decode, flush_decode, flush_execute
@@ -14,17 +14,17 @@ module HazardUnit(
     always_comb begin
         forward_rs1 = `NO_FORWARDING;
         if (rs1_execute != {`GPR_ENCODE_BITS{1'b0}}) begin
-            if (write_gpr_memory & (rs1_execute == rd_memory))
+            if (we_gpr_memory & (rs1_execute == rd_memory))
                 forward_rs1 = `FORWARD_FROM_MEMORY;
-            else if (write_gpr_writeback & (rs1_execute == rd_writeback))
+            else if (we_gpr_writeback & (rs1_execute == rd_writeback))
                 forward_rs1 = `FORWARD_FROM_WRITEBACK;
         end
 
         forward_rs2 = `NO_FORWARDING;
         if (rs2_execute != {`GPR_ENCODE_BITS{1'b0}})
-            if (write_gpr_memory & (rs2_execute == rd_memory))
+            if (we_gpr_memory & (rs2_execute == rd_memory))
                 forward_rs2 = `FORWARD_FROM_MEMORY;
-            else if (write_gpr_writeback & (rs2_execute == rd_memory))
+            else if (we_gpr_writeback & (rs2_execute == rd_writeback))
                 forward_rs2 = `FORWARD_FROM_WRITEBACK;
     end
 

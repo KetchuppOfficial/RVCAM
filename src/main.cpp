@@ -29,16 +29,7 @@ int main(int argc, char **argv) try
     });
     const auto top = std::unique_ptr<rvcam, deleter_type>(new rvcam{context.get()});
 
-    top->a = -1;
-    top->b = 1;
-
-    top->control = 0b0011;
-    top->eval();
-    fmt::println("slt(-1, 1) = {}", top->result);
-
-    top->control = 0b0101;
-    top->eval();
-    fmt::println("sltu(-1, 1) = {}", top->result);
+    top->reset = true;
 
     return 0;
 }

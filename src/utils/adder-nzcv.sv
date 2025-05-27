@@ -1,10 +1,10 @@
 `include "constants.sv"
 
-module Adder #(
+module AdderNZCV #(
     parameter N = `XLEN
 ) (
     input logic[N-1:0] a, b,
-    input logic control, // 0 for addition, 1 for subtraction
+    input logic control,
 
     output logic[N-1:0] result,
     output logic n, z, c, v

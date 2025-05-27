@@ -11,7 +11,7 @@ module ALU #(
 );
     logic[N-1:0] sum;
 
-    Adder adder(.a(a), .b(b), .control(control[0]),
+    AdderNZCV adder(.a(a), .b(b), .control(control[0]),
                 .result(sum), .n(n), .z(z), .c(c), .v(v));
 
     always_comb

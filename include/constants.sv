@@ -1,7 +1,7 @@
 // Common architectural constants
 `define XLEN 64
-`define GPRS_COUNT 32
-`define GPR_ENCODE_BITS $clog(`GPRS_COUNT)
+`define GPR_ENCODE_BITS 5
+`define GPRS_COUNT (1 << 5)
 
 // Instruction decoding
 // Note: begin and end are inclusive
@@ -36,6 +36,10 @@
 `define OP_RV64_REG_IMM_ARITH 7'b0011011
 `define OP_RV64_REG_REG_ARITH 7'b0111011
 
+// Adder control signal
+`define ADDER_ADD 1'b0
+`define ADDER_SUB 1'b1
+
 // Primary ALU operation type derived from opcode. The first two map directly to ALU control modes,
 // the last one requires analysis of funct3 and funct7.
 `define ALU_OP_BITS_COUNT 2
@@ -57,9 +61,9 @@
 `define ALU_CNTL_SLT  4'b001_1
 `define ALU_CNTL_SLTU 4'b010_1
 
-// Source of the second ALU argument
-`define ALU_SRC2_GPR 0
-`define ALU_SRC2_IMM 1
+// Source of ALU arguments
+`define ALU_SRC_GPR 1'b0
+`define ALU_SRC_IMM 1'b1
 
 // Immediate decoding modes
 `define IMM_TYPE_BITS_COUNT 3
@@ -75,19 +79,24 @@
 `define J_TYPE_BITS 21
 
 // Result source
-`define RESULT_SRC_BITS_COUNT  3
-`define RESULT_SRC_ALU         3'b000
-`define RESULT_SRC_MEM         3'b001
-`define RESULT_SRC_IMM         3'b010
-`define RESULT_SRC_PC_PLUS_4   3'b011
-`define RESULT_SRC_PC_PLUS_IMM 3'b100
+`define RESULT_SRC_BITS_COUNT  2
+`define RESULT_SRC_ALU         2'b00
+`define RESULT_SRC_MEM         2'b01
+`define RESULT_SRC_PC_PLUS_4   2'b10
+`define RESULT_SRC_PC_PLUS_IMM 2'b11
 
 // Branch types
-`define BRANCH_TYPE_BITS_COUNT 2
-`define BRANCH_TYPE_NOT_BRANCH 2'b00
-`define BRANCH_TYPE_UNCOND     2'b01 // jal
-`define BRANCH_TYPE_COND       2'b10 // beq, bne, blt, bge, bltu, bgeu
-`define BRANCH_TYPE_INDIRECT   2'b11 // jalr
+// Note: bits 3:1 of conditional branches correspond to their's funct3 field
+`define BRANCH_TYPE_BITS_COUNT 4
+`define BRANCH_TYPE_NOT_BRANCH 4'b000_0
+`define BRANCH_TYPE_JAL        4'b001_0
+`define BRANCH_TYPE_JALR       4'b010_0
+`define BRANCH_TYPE_BEQ        4'b000_1
+`define BRANCH_TYPE_BNE        4'b001_1
+`define BRANCH_TYPE_BLT        4'b100_1
+`define BRANCH_TYPE_BGE        4'b101_1
+`define BRANCH_TYPE_BLTU       4'b110_1
+`define BRANCH_TYPE_BGEU       4'b111_1
 
 // PC source
 `define PC_SRC_BITS_COUNT   2
