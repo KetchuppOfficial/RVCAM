@@ -58,6 +58,7 @@ module DataPath(
     logic[`XLEN-1:0] gpr2_value_or_forwarded_value;
     logic[`PC_SRC_BITS_COUNT-1:0] pc_source_execute;
     logic[`RESULT_SRC_BITS_COUNT-1:0] result_src_execute;
+    logic stop_pipeline_execute, stop_pipeline_memory, stop_pipeline_writeback;
 
     // Memory
     logic[`RESULT_SRC_BITS_COUNT-1:0] result_src_memory;
@@ -93,7 +94,7 @@ module DataPath(
         gpr1_value_decode, gpr2_value_decode
     );
 
-    localparam kExecuteRegBits = 4 + `RESULT_SRC_BITS_COUNT + `BRANCH_TYPE_BITS_COUNT
+    localparam kExecuteRegBits = 5 + `RESULT_SRC_BITS_COUNT + `BRANCH_TYPE_BITS_COUNT
                                    + `ALU_CNTL_BITS_COUNT + 5 * `XLEN + 3 * `GPR_ENCODE_BITS;
 
     FFWithClear #(/*N = */kExecuteRegBits) execute_reg(
@@ -101,12 +102,12 @@ module DataPath(
         clk, reset, flush_execute,
         {we_gpr, result_src, we_memory, branch_type, alu_control, alu_src1, alu_src2,
          gpr1_value_decode, gpr2_value_decode, pc_decode, rs1_decode, rs2_decode, rd_decode,
-         imm_decode, pc_plus_4_decode},
+         imm_decode, pc_plus_4_decode, (opcode == `OP_SYSTEM)},
         // outputs
         {we_gpr_execute, result_src_execute, we_memory_execute, branch_type_execute,
          alu_control_execute, alu_src1_execute, alu_src2_execute, gpr1_value_execute,
-         gpr2_value_execute, pc_execute, rs1_execute, rs2_execute, rd_execute, imm_execute,
-         pc_plus_4_execute}
+         gpr2_value_execute, pc_execute, rs1_execute, rs2_execute, rd_execute,
+         imm_execute, pc_plus_4_execute, stop_pipeline_execute}
     );
 
     assign load_on_execute = (result_src_execute == `RESULT_SRC_MEM);
@@ -121,34 +122,36 @@ module DataPath(
         branch_taken
     );
 
-    localparam kMemoryRegBits = 2 + `RESULT_SRC_BITS_COUNT + 4 * `XLEN + `GPR_ENCODE_BITS;
+    localparam kMemoryRegBits = 3 + `RESULT_SRC_BITS_COUNT + 4 * `XLEN + `GPR_ENCODE_BITS;
 
     FF #(/*N = */kMemoryRegBits) memory_reg(
         // inputs
         clk, reset,
         {we_gpr_execute, result_src_execute, we_memory_execute, alu_result_execute,
-         gpr2_value_or_forwarded_value, pc_plus_imm_execute, rd_execute, pc_plus_4_execute},
+         gpr2_value_or_forwarded_value, pc_plus_imm_execute, rd_execute, pc_plus_4_execute,
+         stop_pipeline_execute},
         // outputs
-        {we_gpr_memory, result_src_memory, we_memory_memory, alu_result_memory, write_data_memory,
-         pc_plus_imm_memory, rd_memory, pc_plus_4_memory}
+        {we_gpr_memory, result_src_memory, we_memory_memory, alu_result_memory,
+         write_data_memory, pc_plus_imm_memory, rd_memory, pc_plus_4_memory,
+         stop_pipeline_memory}
     );
 
-    localparam kWriteBackRegBits = 1 + `RESULT_SRC_BITS_COUNT + 4 * `XLEN + `GPR_ENCODE_BITS;
+    localparam kWriteBackRegBits = 2 + `RESULT_SRC_BITS_COUNT + 4 * `XLEN + `GPR_ENCODE_BITS;
 
     FF #(/*N = */kWriteBackRegBits) writeback_reg(
         // inputs
         clk, reset,
         {we_gpr_memory, result_src_memory, alu_result_memory, read_data, rd_memory,
-         pc_plus_4_memory, pc_plus_imm_memory},
+         pc_plus_4_memory, pc_plus_imm_memory, stop_pipeline_memory},
         // outputs
         {we_gpr_writeback, result_src_writeback, alu_result_writeback, read_data_writeback,
-         rd_writeback, pc_plus_4_writeback, pc_plus_imm_writeback}
+         rd_writeback, pc_plus_4_writeback, pc_plus_imm_writeback, stop_pipeline_writeback}
     );
 
     WriteBackStage write_back(
         // inputs
         alu_result_writeback, read_data_writeback, pc_plus_4_writeback, pc_plus_imm_writeback,
-        result_src_writeback,
+        result_src_writeback, stop_pipeline_writeback,
         // output
         result_writeback
     );

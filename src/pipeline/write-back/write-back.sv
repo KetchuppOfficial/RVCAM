@@ -3,9 +3,14 @@
 module WriteBackStage(
     input logic[`XLEN-1:0] alu_result, read_data, pc_plus_4, pc_plus_imm,
     input logic[`RESULT_SRC_BITS_COUNT-1:0] result_src,
+    input logic stop_pipeline,
 
     output logic[`XLEN-1:0] result
 );
+    always_comb
+        if (stop_pipeline)
+            $finish;
+
     always_comb
         case (result_src)
             `RESULT_SRC_ALU:

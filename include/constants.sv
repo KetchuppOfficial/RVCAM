@@ -24,6 +24,7 @@
 `define FUNCT7_LEN (`FUNCT7_END - `FUNCT7_BEGIN + 1)
 
 // Opcodes
+`define OP_SYSTEM             7'b1110011 // ecall, ebreak
 `define OP_AUIPC              7'b0010111
 `define OP_LUI                7'b0110111
 `define OP_JALR               7'b1100111
